@@ -4,24 +4,15 @@ GOBUILD=$(GO) build
 GOCLEAN=$(GO) clean
 GOTEST=$(GO) test
 GOGET=$(GO) get
-BINARY_NAME=block
+BINARY_NAME=kms
 BINARY_UNIX=$(BINARY_NAME)_unix
 Version=1.0.0
 
 all: test build
 build: vendor
-	$(GOBUILD) -ldflags="-w -s" -v -o $(BINARY_NAME) ./cmd/block-data/block_data.go
-build-tmp: build rm-build
-build-dev: vendor
-	$(GOBUILD) -ldflags="-w -s" -v -o $(BINARY_NAME)_dev ./cmd/block-data/block_data.go
-build-test: vendor
-	$(GOBUILD) -ldflags="-w -s" -v -o $(BINARY_NAME)_test ./cmd/block-data/block_data.go
+	$(GOBUILD) -ldflags="-w -s" -v -o $(BINARY_NAME) ./cmd/kms/kms.go
 build-v:
-	$(GOBUILD) -ldflags="-w -s" -v -mod=vendor -o $(BINARY_NAME) ./cmd/block-data/block_data.go
-build-dev-v:
-	$(GOBUILD) -ldflags="-w -s" -v -mod=vendor -o $(BINARY_NAME)_dev ./cmd/block-data/block_data.go
-build-test-v:
-	$(GOBUILD) -ldflags="-w -s" -v -mod=vendor -o $(BINARY_NAME)_test ./cmd/block-data/block_data.go
+	$(GOBUILD) -ldflags="-w -s" -v -mod=vendor -o $(BINARY_NAME) ./cmd/kms/kms.go
 vendor:
 	go env -w GOPROXY=https://goproxy.cn,direct
 rm-build:
@@ -67,8 +58,3 @@ image-build: docker-build
 	cp asset/shell/entrypoint.sh block-mgr/
 	docker build -t block-mgr:$(Version) .
 	rm -rf block-mgr
-# docker container run -d --name block-mgr
-# -e MQTT_SERVER_URI=139.159.225.207:8083 -e MQTT_USER=status-mgr -e MQTT_PASSWORD=test
-# -e MYSQL_SERVER_IP=222.85.139.245 -e MYSQL_PORT=18306 -e MYSQL_USER=root -e MYSQL_PASSWORD=123
-# -e MONGODB_SERVER_IP=192.168.100.210 -e MONGODB_PORT=1666 -e MONGODB_USER=root -e MONGODB_PASSWORD=iscas123
-# -p 12345:12345--restart=always block-mgr:$ver
